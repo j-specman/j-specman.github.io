@@ -1,0 +1,279 @@
+:root {
+  --bg: #0e1726;
+  --bg-raised: #16233a;
+  --text: #e6ecf5;
+  --muted: #9fb0c8;
+  --accent: #ffd54a;
+  --line: #243653;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+
+a {
+  color: var(--accent);
+}
+
+.container {
+  max-width: 70rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3.5rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.brand img {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.6rem;
+}
+
+.brand .dot {
+  color: var(--accent);
+}
+
+.site-header nav a {
+  margin-left: 1.5rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.site-header nav a:hover {
+  color: var(--text);
+}
+
+.hero {
+  padding: 3rem 0 4.5rem;
+  background: radial-gradient(ellipse at 75% 40%, #1b2f52 0%, var(--bg) 60%);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.hero h1 {
+  margin: 0 0 1.25rem;
+  font-size: 3.2rem;
+  line-height: 1.1;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.lead {
+  margin: 0 0 2rem;
+  font-size: 1.15rem;
+  color: var(--muted);
+}
+
+.button {
+  display: inline-block;
+  margin-right: 0.75rem;
+  padding: 0.65rem 1.5rem;
+  border: 1px solid var(--muted);
+  border-radius: 0.3rem;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.button:hover {
+  border-color: var(--text);
+}
+
+.button.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #1b1b1b;
+}
+
+.button.primary:hover {
+  background: #ffe07a;
+}
+
+.hero-visual {
+  position: relative;
+  height: 28rem;
+}
+
+.paper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 78%;
+  height: 24rem;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 0.4rem;
+  background: #fff;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.45);
+  transform: rotate(-2deg);
+}
+
+.paper img {
+  display: block;
+  width: 100%;
+}
+
+.code {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 78%;
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background: rgba(14, 23, 38, 0.94);
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.5);
+  font: 0.78rem/1.55 Consolas, "Courier New", monospace;
+  color: var(--text);
+  overflow: hidden;
+  transform: rotate(1.5deg);
+}
+
+.code .c {
+  color: #6b7f9e;
+}
+
+.code .k {
+  color: var(--accent);
+}
+
+.code .s {
+  color: #8fd4b0;
+}
+
+.features {
+  padding: 3.5rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-raised);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 2.5rem;
+}
+
+.number {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.features h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.features p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.documentation {
+  padding: 3.5rem 0;
+}
+
+.documentation h2 {
+  margin: 0 0 1.5rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1.25rem;
+}
+
+.card {
+  display: block;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background: var(--bg-raised);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.card:hover {
+  border-color: var(--accent);
+}
+
+.card strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--accent);
+}
+
+.card span {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.note {
+  margin: 1.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.site-footer {
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+@media (max-width: 52rem) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1 {
+    font-size: 2.4rem;
+  }
+
+  .hero-visual {
+    height: 26rem;
+  }
+}

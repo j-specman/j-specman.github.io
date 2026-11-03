@@ -1,1 +1,115 @@
-Hello Specman!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Specman - One specification, many readers</title>
+  <meta name="description" content="Specman is a WYSIWYG editor for actogramms. Business, developers and testers share one specification, with AI support for each of them.">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="./"><img src="assets/specman-logo.png" alt="">Specman<span class="dot">.</span></a>
+      <nav>
+        <a href="manual/index.html">Manual</a>
+        <a href="https://github.com/j-specman/specman/releases">Download</a>
+        <a href="https://github.com/j-specman/specman">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-text">
+          <p class="eyebrow">WYSIWYG editor for actogramms</p>
+          <h1>One specification<span class="accent">.</span><br><span class="accent">Many readers.</span></h1>
+          <p class="lead">
+            Business, developers and testers all work with the same specification. They see a
+            diagram, while machine-readable text underneath gives each of them AI support.
+          </p>
+          <p class="actions">
+            <a class="button primary" href="manual/index.html">Read the manual</a>
+            <a class="button" href="https://github.com/j-specman/specman/releases">Download</a>
+          </p>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <figure class="paper">
+            <img src="assets/anagramms-screenshot.png" alt="">
+          </figure>
+          <pre class="code"><code><span class="c">// the same steps, as text</span>
+<span class="k">subsequence</span>(1, <span class="s">"Read vocabulary"</span>) {
+    <span class="k">simple</span>(1.1, <span class="s">"The system reads the file
+        with the words of the vocabulary"</span>);
+    <span class="k">while</span>(1.2, <span class="s">"For every line of the file..."</span>) {
+        <span class="k">simple</span>(1.2.1, <span class="s">"... splits the line at the
+            word boundaries"</span>);
+        <span class="k">simple</span>(1.2.2, <span class="s">"... appends all words to
+            the vocabulary"</span>);
+    }
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="container columns">
+        <article>
+          <span class="number">01</span>
+          <h2>Structure you can see</h2>
+          <p>
+            Loops and branches are easy to read in an actogramm, and every structured step can be
+            collapsed to hide its details. Big specifications stay manageable.
+          </p>
+        </article>
+        <article>
+          <span class="number">02</span>
+          <h2>Changes you can track</h2>
+          <p>
+            Like in a word processor, changes are marked right in the diagram. Several change sets
+            can be handled in parallel, which fits iterative development.
+          </p>
+        </article>
+        <article>
+          <span class="number">03</span>
+          <h2>Ready for AI</h2>
+          <p>
+            Diagrams are stored in a pseudocode-like text format with a defined grammar. AI agents
+            can read it, so business, developers and testers all get AI support on the same
+            specification.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="documentation">
+      <div class="container">
+        <h2>Documentation</h2>
+        <div class="cards">
+          <a class="card" href="manual/index.html">
+            <strong>Manual</strong>
+            <span>HTML, one page with a table of contents on the left</span>
+          </a>
+          <a class="card" href="manual/specman-manual.pdf">
+            <strong>Manual as PDF</strong>
+            <span>Good for printing</span>
+          </a>
+          <a class="card" href="https://github.com/j-specman/specman/releases">
+            <strong>Download</strong>
+            <span>Releases on GitHub</span>
+          </a>
+        </div>
+        <p class="note">The online manual always describes the latest release.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <a href="https://github.com/j-specman/specman">Specman on GitHub</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<style>
+  .site-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 3.5rem;
+    padding: 0 1.5rem;
+    background: #0e1726;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .site-bar a {
+    text-decoration: none;
+  }
+  .site-bar .brand {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #e6ecf5;
+  }
+  .site-bar .brand img {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.6rem;
+  }
+  .site-bar .brand .dot {
+    color: #ffd54a;
+  }
+  .site-bar nav a {
+    margin-left: 1.5rem;
+    color: #9fb0c8;
+  }
+  .site-bar nav a:hover {
+    color: #e6ecf5;
+  }
+  body {
+    padding-top: 3.5rem;
+  }
+  body,
+  h1, h2, h3, h4, h5, h6,
+  #toc, #toctitle, #toc.toc2 a,
+  .title, #footer-text, #header .details,
+  table.tableblock, .admonitionblock > table td.content,
+  .dlist dt, .quoteblock blockquote, .sidebarblock p {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6, #toctitle {
+    font-weight: 600;
+    color: #0e1726;
+  }
+  #content h2, #toctitle {
+    display: inline-block;
+    padding-bottom: 0.15em;
+    border-bottom: 0.18em solid #ffd54a;
+  }
+  #toc.toc2 {
+    top: 3.5rem;
+  }
+</style>
