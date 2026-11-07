@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: j-specman/specman
-          ref: master
+          ref: 1.4.x
           path: specman
 
       - name: Set up Java
