@@ -17,6 +17,10 @@
   margin-bottom: 0.5rem;
 }
 
+.release-notes li::marker {
+  color: var(--accent);
+}
+
 .release-notes code {
   padding: 0.1em 0.35em;
   border: 1px solid var(--line);
