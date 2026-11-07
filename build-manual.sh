@@ -17,10 +17,10 @@ mkdir -p "$OUT_DIR"
 # Images and example files referenced by the manual live next to the AsciiDoc source
 find "$DOC_DIR" -maxdepth 1 -type f ! -name '*.adoc' ! -name 'specman-manual.pdf' -exec cp {} "$OUT_DIR/" \;
 
-# Step icons in chapter headings are referenced as ../src/main/resources/images/... from the manual
+# Step and toolbar icons in chapter headings are referenced as ../src/main/resources/images/svg/... from the manual
 ICON_DIR="$OUT_DIR/../src/main/resources/images"
 mkdir -p "$ICON_DIR"
-cp "$DOC_DIR/../src/main/resources/images/"*.png "$ICON_DIR/"
+cp -r "$DOC_DIR/../src/main/resources/images/svg" "$ICON_DIR/"
 
 # webfonts!: don't load fonts from Google, keeps the site free of third-party requests
 # docinfo: adds the site header (manual-theme/docinfo*.html) so the manual looks like part of the website
