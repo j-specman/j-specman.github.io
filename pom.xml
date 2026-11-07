@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.specman</groupId>
+    <artifactId>specman-website</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Clone of the Specman repository, relative to this project (or absolute). Source of the manual and the release notes. -->
+        <specman.clone>../specman</specman.clone>
+        <!-- Output directory of the website, uploaded by the GitHub Pages workflow. Must be relative to this project: it is mounted into Docker containers. -->
+        <site.dir>_site</site.dir>
+        <pandoc.image>pandoc/core:3.8</pandoc.image>
+        <asciidoctor.image>asciidoctor/docker-asciidoctor:1.108.1</asciidoctor.image>
+    </properties>
+
+    <!--
+        Docker and a JDK (21 or higher) are the only tools needed to build the website.
+        Usage:
+          mvn antrun:run@collect-release-notes   collects new release notes from the Specman clone (done once per release)
+          mvn package                            builds manual and release history into _site
+        In the GitHub Pages workflow, the Specman clone is checked out into the workspace: mvn package -Dspecman.clone=specman
+    -->
+    <build>
+        <plugins>
+            <!--
+                Builds the manual from doc/specman-manual.adoc of the Specman clone in two forms:
+                  manual/index.html          single page HTML with the table of contents on the left
+                  manual/specman-manual.pdf  PDF
+                asciidoctor runs in a Docker container which sees this project as /site and the Specman clone as
+                /specman. The manual references images relative to its source file, so it has to stay in the clone.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>build-manual</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <property name="specman.clone.dir" location="${specman.clone}"/>
+                                <fail message="No doc/specman-manual.adoc in the Specman clone ${specman.clone}. Set the location with -Dspecman.clone=&lt;path&gt;">
+                                    <condition>
+                                        <not>
+                                            <available file="${specman.clone.dir}/doc/specman-manual.adoc" type="file"/>
+                                        </not>
+                                    </condition>
+                                </fail>
+
+                                <macrodef name="asciidoctor">
+                                    <attribute name="tool"/>
+                                    <element name="tool-args"/>
+                                    <sequential>
+                                        <exec executable="docker" failonerror="true">
+                                            <arg value="run"/>
+                                            <arg value="--rm"/>
+                                            <arg value="-v"/>
+                                            <arg value="${project.basedir}:/site"/>
+                                            <arg value="-v"/>
+                                            <arg value="${specman.clone.dir}:/specman"/>
+                                            <arg value="${asciidoctor.image}"/>
+                                            <arg value="@{tool}"/>
+                                            <tool-args/>
+                                        </exec>
+                                    </sequential>
+                                </macrodef>
+
+                                <delete dir="${site.dir}/manual"/>
+                                <mkdir dir="${site.dir}/manual"/>
+                                <!-- Images and example files referenced by the manual live next to its source -->
+                                <copy todir="${site.dir}/manual" includeEmptyDirs="false">
+                                    <fileset dir="${specman.clone.dir}/doc" includes="*" excludes="*.adoc,specman-manual.pdf"/>
+                                </copy>
+                                <!--
+                                    The icons in the chapter headings are referenced as ../src/main/resources/images/svg/...
+                                    from the manual, i.e. relative to manual/ in the output
+                                -->
+                                <copy todir="${site.dir}/src/main/resources/images/svg">
+                                    <fileset dir="${specman.clone.dir}/src/main/resources/images/svg"/>
+                                </copy>
+
+                                <!--
+                                    webfonts!: don't load fonts from Google, keeps the site free of third-party requests
+                                    docinfo: adds the site header (manual-theme/docinfo*.html) so the manual looks like part of the website
+                                -->
+                                <asciidoctor tool="asciidoctor">
+                                    <tool-args>
+                                        <arg value="-a"/>
+                                        <arg value="webfonts!"/>
+                                        <arg value="-a"/>
+                                        <arg value="toc=left"/>
+                                        <arg value="-a"/>
+                                        <arg value="toclevels=3"/>
+                                        <arg value="-a"/>
+                                        <arg value="docinfo=shared"/>
+                                        <arg value="-a"/>
+                                        <arg value="docinfodir=/site/manual-theme"/>
+                                        <arg value="-D"/>
+                                        <arg value="/site/${site.dir}/manual"/>
+                                        <arg value="-o"/>
+                                        <arg value="index.html"/>
+                                        <arg value="/specman/doc/specman-manual.adoc"/>
+                                    </tool-args>
+                                </asciidoctor>
+                                <asciidoctor tool="asciidoctor-pdf">
+                                    <tool-args>
+                                        <arg value="-D"/>
+                                        <arg value="/site/${site.dir}/manual"/>
+                                        <arg value="-o"/>
+                                        <arg value="specman-manual.pdf"/>
+                                        <arg value="/specman/doc/specman-manual.adoc"/>
+                                    </tool-args>
+                                </asciidoctor>
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <!--
+                        Copies the release notes of the Specman clone into releasenotes/, but only files which are not
+                        there yet. The release history of this repository is authoritative: a note which was corrected here
+                        must not be overwritten by an outdated copy from a release branch of the Specman repository.
+                        Not bound to a lifecycle phase, so it only runs when called explicitly (see usage above).
+                    -->
+                    <execution>
+                        <id>collect-release-notes</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <fail message="No releasenotes directory in the Specman clone ${specman.clone}. Set the location with -Dspecman.clone=&lt;path&gt;">
+                                    <condition>
+                                        <not>
+                                            <available file="${specman.clone}/releasenotes" type="dir"/>
+                                        </not>
+                                    </condition>
+                                </fail>
+                                <mkdir dir="${project.basedir}/releasenotes"/>
+                                <copy todir="${project.basedir}/releasenotes" verbose="true">
+                                    <fileset dir="${specman.clone}/releasenotes" includes="*.md">
+                                        <present present="srconly" targetdir="${project.basedir}/releasenotes"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+                Builds the release history pages (see the comment in tools/ReleaseHistory.java: that file is started
+                directly from its source with the java launcher, there is no compile step for it).
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.6.4</version>
+                <executions>
+                    <execution>
+                        <id>release-history</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${java.home}/bin/java</executable>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>tools/ReleaseHistory.java</argument>
+                                <argument>releasenotes</argument>
+                                <argument>${site.dir}/releasenotes</argument>
+                                <argument>releasenotes-theme/template.html</argument>
+                                <argument>${pandoc.image}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

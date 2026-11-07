@@ -1,0 +1,26 @@
+.release-notes {
+  max-width: 50rem;
+  padding-top: 2.5rem;
+  padding-bottom: 3.5rem;
+}
+
+.release-notes h1 {
+  margin: 0 0 1.5rem;
+}
+
+.release-notes h2 {
+  margin: 2rem 0 0.75rem;
+  color: var(--accent);
+}
+
+.release-notes li {
+  margin-bottom: 0.5rem;
+}
+
+.release-notes code {
+  padding: 0.1em 0.35em;
+  border: 1px solid var(--line);
+  border-radius: 0.25rem;
+  background: var(--bg-raised);
+  font-size: 0.9em;
+}

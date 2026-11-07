@@ -28,16 +28,14 @@ jobs:
           ref: master
           path: specman
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
-          ruby-version: "3.3"
+          distribution: temurin
+          java-version: "21"
 
-      - name: Install AsciiDoc tools
-        run: gem install asciidoctor asciidoctor-pdf
-
-      - name: Build manual
-        run: ./build-manual.sh specman/doc _site/manual
+      - name: Build manual and release history
+        run: mvn -B package -Dspecman.clone=specman
 
       - name: Assemble site
         run: cp -r index.html css assets _site/
