@@ -94,8 +94,8 @@ public class ReleaseHistory {
   private static String indexMarkdown(List<Path> notes) throws IOException {
     StringBuilder markdown = new StringBuilder("## Release history\n\n");
     for (Path note : notes) {
-      markdown.append("- [Specman ").append(versionOf(note)).append(" (").append(releaseDateOf(note)).append(")](")
-          .append(htmlFileName(note)).append(")\n");
+      markdown.append("- [Specman ").append(versionOf(note)).append("](").append(htmlFileName(note)).append(") (")
+          .append(releaseDateOf(note)).append(")\n");
     }
     return markdown.toString();
   }
