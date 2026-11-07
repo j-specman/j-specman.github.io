@@ -2,9 +2,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,6 +32,11 @@ import java.util.stream.Stream;
  * </ul>
  * Maven starts the program with the exec-maven-plugin, see the {@code release-history} execution in pom.xml.
  *
+ * <h2>Release notes format</h2>
+ * The file name carries the version ({@code release-notes-1.4.0.md}). The release date is taken from a line
+ * {@code Released: 2026-11-07} (ISO date) anywhere in the file, usually directly below the heading. It is shown
+ * in the index next to the version. A release notes file without that line fails the build.
+ *
  * <h2>Arguments</h2>
  * <ol>
  *   <li>Directory with the release notes</li>
@@ -41,6 +50,7 @@ import java.util.stream.Stream;
 public class ReleaseHistory {
   private static final String NOTES_PREFIX = "release-notes-";
   private static final String NOTES_SUFFIX = ".md";
+  private static final Pattern RELEASED_LINE = Pattern.compile("^Released:\\s*(\\S+)\\s*$");
   private static final String USAGE =
       "Usage: java ReleaseHistory.java <notes-dir> <output-dir> <template> <pandoc-docker-image>";
 
@@ -81,12 +91,33 @@ public class ReleaseHistory {
   }
 
   // Level 2 on purpose: the conversion shifts headings up by one level, so this becomes the page heading (h1)
-  private static String indexMarkdown(List<Path> notes) {
+  private static String indexMarkdown(List<Path> notes) throws IOException {
     StringBuilder markdown = new StringBuilder("## Release history\n\n");
     for (Path note : notes) {
-      markdown.append("- [Specman ").append(versionOf(note)).append("](").append(htmlFileName(note)).append(")\n");
+      markdown.append("- [Specman ").append(versionOf(note)).append(" (").append(releaseDateOf(note)).append(")](")
+          .append(htmlFileName(note)).append(")\n");
     }
     return markdown.toString();
+  }
+
+  private static LocalDate releaseDateOf(Path notes) throws IOException {
+    for (String line : Files.readAllLines(notes, StandardCharsets.UTF_8)) {
+      Matcher released = RELEASED_LINE.matcher(line);
+      if (released.matches()) {
+        return parseReleaseDate(released.group(1), notes);
+      }
+    }
+    throw new IllegalArgumentException(notes.getFileName() + " has no line like \"Released: 2026-11-07\"");
+  }
+
+  private static LocalDate parseReleaseDate(String date, Path notes) {
+    try {
+      return LocalDate.parse(date);
+    }
+    catch (DateTimeParseException e) {
+      throw new IllegalArgumentException(
+          "The date \"" + date + "\" in " + notes.getFileName() + " is not a valid ISO date like 2026-11-07");
+    }
   }
 
   private static List<Path> listNotesNewestFirst(Path notesDir) throws IOException {
@@ -102,6 +133,7 @@ public class ReleaseHistory {
     }
     for (Path note : notes) {
       requireNumericVersion(note);
+      releaseDateOf(note);
     }
     notes.sort((first, second) -> compareVersions(versionOf(second), versionOf(first)));
     return notes;
