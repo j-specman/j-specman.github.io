@@ -117,7 +117,7 @@ GitHub finds the workflow by convention, it doesn't have to be registered anywhe
 Sometimes nothing is to be committed here, but the website has to be rebuilt anyway, e.g. when only the manual on the pinned release branch has changed. In this case, the workflow can be started manually, assuming write access to the repository:
 
 . Open the repository https://github.com/j-specman/j-specman.github.io in the browser and switch to the tab *Actions*.
-. Select the workflow *Deploy Specman Website* in t he list on the left.
+. Select the workflow *Deploy Specman Website* in the list on the left.
 . Open the *Run workflow* dropdown above the list of runs on the right, select the branch `main` and press the green button *Run workflow*.
 . Reload the page after a moment. The new run appears at the top of the list, with a yellow dot while it is running and a green check mark when it is done. This takes a few minutes. After that, the updated content is visible on the website.
 . If the run fails (red cross), open it to see in which step it failed.
