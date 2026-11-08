@@ -29,9 +29,9 @@ Whenever a new release of Specman is published, some recurring work has to be do
 Besides Maven, the build operations need a JDK (21 or higher) and a running Docker, both of which are also required for publishing releases in the Specman repository. The additional tools Asciidoctor and pandoc run in Docker containers and don't have to be installed.
 
 ## Publishing operations
-Changing static content usually doesn't require running any Maven-based build operation, because all the work is done by GitHub Pages and the GitHub Actions workflow defined in `.github/workflows/deploy-specman-website.yaml`. The workflow is triggered automatically by a push to `main`, so the updated content is visible on the website a few minutes later.
+Changing static content usually doesn't require running any Maven-based build operation, because all the work is done by GitHub Pages and the GitHub Actions workflow defined in `.github/workflows/deploy-specman-website.yaml`. The workflow is triggered automatically by a push to `main`, so the updated content is visible on the website a few minutes later (see <<Automatic and manual deployment>> for details).
 
-Maven is only required for the following two operations. Both expect a clone of the Specman repository next to this one, in `../specman`. Another location is given with `-Dspecman.clone=<path>`.
+Maven is only required for the following two operations which both expect a clone of the Specman repository next to this one, in `../specman`. Another location is given with `-Dspecman.clone=<path>`.
 
 ### Collect release notes
 
