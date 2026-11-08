@@ -1,3 +1,73 @@
-= j-specman.github.io
+# j-specman.github.io
 
-Website for Specman
+Source of the Specman website, published at https://j-specman.github.io/ with GitHub Pages. The site consists of three parts:
+
+* the landing page and a growing amount of additional static content
+* the online manual (HTML and PDF), built from the Specman repository,
+* the release history, built from the release notes collected in this repository.
+
+The online manual and the release history come from a tricky but easy to use semi-automation explained below. It is related to the release publishing process of Specman, which is described in the https://github.com/j-specman/specman/blob/master/howto/howto-release.adoc[release how-to] of the Specman repository (in German).
+
+## Repository layout
+
+[cols="1,2"]
+|===
+|Path |Content
+
+|`index.html`, `css/`, `assets/` |Landing page and its styles and images
+|`manual-theme/` |Docinfo which gives the manual the header of the site
+|`releasenotes/` |Release notes, one Markdown file per release. They are the source of the release history.
+|`releasenotes-theme/` |Pandoc template of the release history pages
+|`tools/ReleaseHistory.java` |Builds the release history pages. It is started directly from its source with `java`, there is no compile step. The Javadoc explains why.
+|`pom.xml` |Maven build of the manual and the release history, see <<Building>>
+|`.github/workflows/pages.yml` |Build and deployment with GitHub Pages
+|===
+
+## Why Maven?
+Whenever there is a new release of Specman published, there is some recurring work to do in the website repository. In order to keep that work simple, it is semi-automated, using tools which are around anyway, if the maintainer is concerned with the Specman code as well. This is typically the case, so Maven is assumed as being available.
+
+Beside Maven, the build operations needs a JDK (21 or higher) and a running Docker - both also required for the release publishing work in the Specman repository. The additional tools Asciidoctor and pandoc run in Docker containers and don't have to be installed.
+
+## Publishing operations
+Changing static content usually doesn't require to run any Maven-based build operations as all the work is done by GitHub Pages and the GitHub Action workflow defined in pages.yaml. This workflow is triggered automatically when pushing files into the repository, so the update of all content becomes visible on the website a few minutes later.
+
+Maven is only required for the following operations:
+
+[source,shell]
+----
+mvn antrun:run@collect-release-notes
+----
+
+This operation ...
+
+
+[source,shell]
+----
+mvn package
+----
+
+This operation runs a manual assembly and a ... locally as it is otherwise performed automatically by the pages.yaml Action. It is intended for quality checks e.g. if the manual has significantly changed and the HTML and PDF outcome requires a review before publishing.
+
+The result is written to `_site/manual/` (HTML and PDF) and `_site/releasenotes/`. The workflow copies `index.html`, `css` and `assets` into `_site` as well, so the pages only look as on the real site if they are there.
+
+The manual is built from `doc/specman-manual.adoc` of a clone of the Specman repository. By default, the clone is expected in `../specman`. Another location is given with `-Dspecman.clone=<path>`. Locally, the manual shows whatever is checked out in that clone.
+
+## Manual source on GitHub
+
+The workflow checks out the Specman repository at the branch given by `ref` in `.github/workflows/pages.yml`. This is the branch of the latest release (for example `1.4.x`), not `master`, because `master` already contains the unreleased development of the next release. Changes of the manual only show up on the site if they are part of that branch.
+
+## Release history
+
+The release notes are Markdown files named `releasenotes/release-notes-<version>.md`, for example `release-notes-1.4.0.md`. A file starts like this:
+
+[source,markdown]
+----
+## Specman 1.4.0
+Released: 2026-11-07
+----
+
+The line `Released: <ISO date>` is required, the build fails without it. The index lists the releases by version, newest first, with the date behind the version.
+
+## Deployment
+
+As already mentioned, a push to `main` runs the workflow `Build and deploy website`, which builds the site and publishes it. The workflow can also be started manually: *Actions*, *Build and deploy website*, *Run workflow*. This is necessary when only the manual on the release branch has changed and nothing is to be committed here.
