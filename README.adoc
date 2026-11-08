@@ -20,7 +20,7 @@ The online manual and the release history come from a tricky but easy-to-use sem
 |`releasenotes-theme/` |Pandoc template of the release history pages
 |`tools/ReleaseHistory.java` |Builds the release history pages. It is started directly from its source with `java`, there is no compile step. The Javadoc explains why.
 |`pom.xml` |Maven build of the manual and the release history, see <<Publishing operations>>
-|`.github/workflows/deploy-specman-website.yaml` |Build and deployment with GitHub Pages
+|`.github/workflows/deploy-specman-website.yaml` |Workflow which builds the site and deploys it to GitHub Pages
 |===
 
 ## Why Maven?
