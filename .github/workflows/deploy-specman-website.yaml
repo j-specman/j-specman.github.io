@@ -1,4 +1,4 @@
-name: Build and deploy website
+name: Deploy Specman Website
 
 on:
   push:

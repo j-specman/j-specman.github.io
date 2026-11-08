@@ -20,7 +20,7 @@ The online manual and the release history come from a tricky but easy-to-use sem
 |`releasenotes-theme/` |Pandoc template of the release history pages
 |`tools/ReleaseHistory.java` |Builds the release history pages. It is started directly from its source with `java`, there is no compile step. The Javadoc explains why.
 |`pom.xml` |Maven build of the manual and the release history, see <<Publishing operations>>
-|`.github/workflows/pages.yml` |Build and deployment with GitHub Pages
+|`.github/workflows/deploy-specman-website.yaml` |Build and deployment with GitHub Pages
 |===
 
 ## Why Maven?
@@ -29,7 +29,7 @@ Whenever a new release of Specman is published, some recurring work has to be do
 Besides Maven, the build operations need a JDK (21 or higher) and a running Docker, both of which are also required for publishing releases in the Specman repository. The additional tools Asciidoctor and pandoc run in Docker containers and don't have to be installed.
 
 ## Publishing operations
-Changing static content usually doesn't require running any Maven-based build operation, because all the work is done by GitHub Pages and the GitHub Actions workflow defined in `.github/workflows/pages.yml`. The workflow is triggered automatically by a push to `main`, so the updated content is visible on the website a few minutes later.
+Changing static content usually doesn't require running any Maven-based build operation, because all the work is done by GitHub Pages and the GitHub Actions workflow defined in `.github/workflows/deploy-specman-website.yaml`. The workflow is triggered automatically by a push to `main`, so the updated content is visible on the website a few minutes later.
 
 Maven is only required for the following two operations. Both expect a clone of the Specman repository next to this one, in `../specman`. Another location is given with `-Dspecman.clone=<path>`.
 
@@ -53,7 +53,7 @@ Release note files are supposed to follow a particular format in the first two l
 mvn package
 ----
 
-This operation assembles the manual (HTML and PDF) and generates the release history locally, as the `pages.yml` workflow does it automatically. It is intended for quality checks, e.g. if the manual has changed significantly and the HTML and PDF result should be reviewed before publishing.
+This operation assembles the manual (HTML and PDF) and generates the release history locally, as the `deploy-specman-website.yaml` workflow does it automatically. It is intended for quality checks, e.g. if the manual has changed significantly and the HTML and PDF result should be reviewed before publishing.
 
 The result is written to `_site/manual/` and `_site/releasenotes/`. The workflow copies `index.html`, `css` and `assets` into `_site` as well, so the pages only look like on the real site if these are copied there too.
 
@@ -91,18 +91,33 @@ The line `Released: <ISO date>` is required, the build fails without it. The ind
 ## Pinning the source branch
 Any local publishing work refers to a clone of the Specman repository, which is expected to be next to this clone directory in `../specman`. It is up to the maintainer which branch is checked out there. See above for how to change the location.
 
-However, the automatic deployment workflow based on `.github/workflows/pages.yml` must explicitly be pinned to the branch which is supposed to represent the "latest release" - for example `1.4.x`. The branch to use is defined by the `ref` line in the YAML. It is usually not `master`, because right after publishing a release, the work on `master` goes on and already contains the unreleased development of the next release. Changes of the manual only show up on the website if they are made on the pinned branch.
+However, the automatic deployment workflow based on `.github/workflows/deploy-specman-website.yaml` must explicitly be pinned to the branch which is supposed to represent the "latest release" - for example `1.4.x`. The branch to use is defined by the `ref` line in the YAML. It is usually not `master`, because right after publishing a release, the work on `master` goes on and already contains the unreleased development of the next release. Changes of the manual only show up on the website if they are made on the pinned branch.
 
 The https://github.com/j-specman/specman/blob/master/howto/howto-release.adoc[release how-to] of the Specman repository describes the rules when and how to change the pinned branch depending on the type of release publishing.
 
 ## Automatic and manual deployment
 
-As already mentioned, a push to `main` automatically triggers the workflow `Build and deploy website`, which builds the site and publishes it.
+As already mentioned, a push to `main` automatically triggers the workflow `Deploy Specman Website`, which builds the site and publishes it.
 
-However, sometimes nothing is to be committed here, but the website has to be rebuilt anyway, e.g. when only the manual on the pinned release branch has changed. In this case, the workflow can be started manually, assuming write access to the repository:
+The triggers are defined in the `on:` section at the top of `.github/workflows/deploy-specman-website.yaml`:
+
+[source,yaml]
+----
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+----
+
+`push` with `branches: [main]` starts the workflow whenever commits are pushed to `main`, no matter which files have changed. Pushes to other branches don't trigger it. `workflow_dispatch` makes the workflow startable manually: It adds the *Run workflow* button on GitHub, which is used below.
+
+GitHub finds the workflow by convention, it doesn't have to be registered anywhere: Every YAML file in the directory `.github/workflows/` of a repository is a workflow. The file name is free, the name shown on GitHub is the `name:` in the file. On the other hand, there is one setting which is not part of the repository content: In the repository settings under *Pages*, *Build and deployment*, the source has to be *GitHub Actions*. Otherwise GitHub would publish the files of a branch directly, instead of the result of this workflow.
+
+### Manual workflow start
+Sometimes nothing is to be committed here, but the website has to be rebuilt anyway, e.g. when only the manual on the pinned release branch has changed. In this case, the workflow can be started manually, assuming write access to the repository:
 
 . Open the repository https://github.com/j-specman/j-specman.github.io in the browser and switch to the tab *Actions*.
-. Select the workflow *Build and deploy website* in the list on the left.
+. Select the workflow *Deploy Specman Website* in the list on the left.
 . Open the *Run workflow* dropdown above the list of runs on the right, select the branch `main` and press the green button *Run workflow*.
 . Reload the page after a moment. The new run appears at the top of the list, with a yellow dot while it is running and a green check mark when it is done. This takes a few minutes. After that, the updated content is visible on the website.
 . If the run fails (red cross), open it to see in which step it failed.
