@@ -127,7 +127,7 @@
 
                     <!--
                         Copies the release notes of the Specman clone into releasenotes/, but only files which are not
-                        there yet. The release history of this repository is authoritative: a note which was corrected here
+                        there yet. The notes of this repository take precedence over the copies in the Specman repository: a note which was corrected here
                         must not be overwritten by an outdated copy from a release branch of the Specman repository.
                         Not bound to a lifecycle phase, so it only runs when called explicitly (see usage above).
                     -->
